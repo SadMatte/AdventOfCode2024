@@ -1,10 +1,10 @@
 use std::fs;
 
-fn find_guard<'a>(layout: &'a Vec<&str>) -> &'a Vec<usize> {
+fn find_guard(layout: &Vec<&str>) -> Vec<usize> {
     for (y_index, _y_plane) in layout.iter().enumerate() {
         for (x_index, x_position) in layout[y_index].chars().enumerate() {
             if x_position == '^' {
-                let guard_position: &Vec<usize> = &vec![x_index, y_index];
+                let guard_position: Vec<usize> = vec![x_index, y_index];
                 return guard_position;
             }
         }
@@ -52,14 +52,7 @@ fn main() {
 
     let mut guard_position: Vec<usize> = Vec::new();
 
-    for (y_index, _y_plane) in layout.iter().enumerate() {
-        for (x_index, x_position) in layout[y_index].chars().enumerate() {
-            if x_position == '^' {
-                guard_position = vec![x_index, y_index];
-                return guard_position;
-            }
-        }
-    }
+    guard_position = find_guard(&layout);
 
     /* 
     //find guard on the 1 dimensional plane
