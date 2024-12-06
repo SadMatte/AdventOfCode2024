@@ -1,9 +1,9 @@
 use std::fs;
 
-fn find_guard(layout: &Vec<&str>) -> Vec<usize> {
+fn find_guard(layout: &Vec<Vec<char>>) -> Vec<usize> {
     for (y_index, _y_plane) in layout.iter().enumerate() {
-        for (x_index, x_position) in layout[y_index].chars().enumerate() {
-            if x_position == '^' {
+        for (x_index, x_position) in layout[y_index].iter().enumerate() {
+            if x_position == &'^' {
                 let guard_position: Vec<usize> = vec![y_index, x_index];
                 return guard_position;
             }
@@ -12,8 +12,31 @@ fn find_guard(layout: &Vec<&str>) -> Vec<usize> {
     panic!("Guard not found");
 }
 
-fn is_object_in_front_of_guard(guard_facing_direction: &str, guard_position: &Vec<usize>, layout: &Vec<&str>) -> bool {
-    true
+fn is_object_in_front_of_guard(guard_facing_direction: &str, guard_position: &Vec<usize>, layout: &Vec<Vec<char>>) -> bool {
+    match guard_facing_direction {
+        "up" => {
+            if layout[guard_position[0] - 1][guard_position[1]] == '#' {
+                return true;
+            }
+        },
+        "right" => {
+            if layout[guard_position[0]][guard_position[1] + 1] == '#' {
+                return true;
+            }
+        },
+        "down" => {
+            if layout[guard_position[0] + 1][guard_position[1]] == '#' {
+                return true;
+            }
+        },
+        "left" => {
+            if layout[guard_position[0]][guard_position[1] - 1] == '#' {
+                return true;
+            }
+        },
+        _ => panic!("Guard facing unknown direction")
+    }
+    return false;
 }
 
 //moves guard in the direction it's facing
@@ -42,41 +65,43 @@ fn main() {
     let input: String = fs::read_to_string("input.txt")
         .expect("File not found");
 
-    let input: &str = "....#.....
-.........#
-..........
-..#.......
-.......#..
-..........
-.#..^.....
-........#.
-#.........
-......#...";
-
     //split the map up into 2 dimensions
-    let layout: Vec<&str> = input.split("\n").collect();
+    let mut layout: Vec<Vec<char>> = input
+        .split("\n")
+        .map(|line: &str| line.chars().collect())
+        .collect();
 
     //assumably the direction the guard is facing at the start
     let mut guard_facing_direction: &str = "up";
 
-    let mut guard_position: Vec<usize> = Vec::new();
+    let mut guard_position: Vec<usize> = find_guard(&layout);
 
-    guard_position = find_guard(&layout);
+    //set start as patrolled by guard
+    layout[guard_position[0]][guard_position[1]] = 'X';
 
-    if layout[guard]
+    //loop until guard is out of bounds
+    while guard_position[0] < layout.len()-1 && guard_position[0] > 0 && guard_position[1] < layout[0].len()-1 && guard_position[1] > 0 {
 
-    /* 
-    //find guard on the 1 dimensional plane
-    let guard_1_dimensional_position = if let Some(guard_1_dimensional_position) = input.find('^') {
-        guard_1_dimensional_position
-    } else {
-        panic!("Guard not found");
-    };
+        if is_object_in_front_of_guard(guard_facing_direction, &guard_position, &layout) {
+            guard_facing_direction = guard_turn_right(guard_facing_direction);
+        }
+        else {
+            guard_position = guard_move_forward(guard_facing_direction, &guard_position);
+            layout[guard_position[0]][guard_position[1]] = 'X';
+        }
+    }
 
-    println!("{:?}", layout);
-    
-    
-    guard_2_dimensional_position.push(input.get(0).len());
-    guard_2_dimensional_position.push(input.len());*/
+    //check how many X's are in the map (spaces the guard has walked)
+    let mut total_marked_spaces: i32 = 0;
+    for y_plane in &layout {
+        for mark in y_plane {
+            if mark == &'X' {
+                total_marked_spaces += 1;
+            }
+        }
+        println!("{:?}", y_plane);
+    }
+
+    println!("{}", total_marked_spaces);
 
 }
