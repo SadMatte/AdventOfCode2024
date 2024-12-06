@@ -1,0 +1,13 @@
+# Ignore build artifacts
+target/
+
+# Ignore hidden irrelevant files
+*.swp
+*.swo
+*.DS_Store
+.idea/
+.vscode/
+
+*.exe
+*.out
+*.log
