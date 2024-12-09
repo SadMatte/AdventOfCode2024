@@ -21,19 +21,6 @@ fn main() {
     let input: String = fs::read_to_string("input.txt")
         .expect("File not found");
 
-    let input: &str = "............
-........0...
-.....0......
-.......0....
-....0.......
-......A.....
-............
-............
-........A...
-.........A..
-............
-............";
-
     /*
     ......#....#
     ...#....0...
@@ -54,7 +41,7 @@ fn main() {
 
     //create maps to keep track of nodes
     let mut nodes_map: HashMap<char, Vec<Node>> = HashMap::new();
-    let mut anti_nodes_map: HashMap<char, Vec<AntiNode>> = HashMap::new();
+    let mut anti_nodes_map: Vec<AntiNode> = Vec::new();
 
     for (y_index, y_plane) in matrix.iter().enumerate() {
         for (x_index, node_name) in y_plane.chars().enumerate() {
@@ -89,27 +76,22 @@ fn main() {
                 //if antinode is out of bounds then don't add
                 if first_anti_node.y < matrix.len() as i64 && first_anti_node.x < matrix[0].len() as i64 && first_anti_node.y >= 0 && first_anti_node.x >= 0 {
                     println!("Antinode accepted with position {}, {}\n", first_anti_node.x, first_anti_node.y);
-                    anti_nodes_map.entry(*node_name).or_insert(Vec::new()).push(first_anti_node);
+                    anti_nodes_map.push(first_anti_node);
                 }
                 if second_anti_node.y < matrix.len() as i64 && second_anti_node.x < matrix[0].len() as i64 && second_anti_node.y >= 0 && second_anti_node.x >= 0 {
                     println!("Antinode accepted with position {}, {}\n", second_anti_node.x, second_anti_node.y);
-                    anti_nodes_map.entry(*node_name).or_insert(Vec::new()).push(second_anti_node);
+                    anti_nodes_map.push(second_anti_node);
                 }
             }
         }
     }
 
     //remove duplicates that may have been made
-    for anti_nodes in anti_nodes_map.values_mut() {
-        remove_duplicates(anti_nodes);
-    }
+    remove_duplicates(&mut anti_nodes_map);
 
     //count anti nodes
     let mut total_anti_nodes: usize = 0;
-    for anti_nodes in anti_nodes_map.values() {
-        total_anti_nodes += anti_nodes.len();
-        println!("{:?}", anti_nodes);
-    }
+    total_anti_nodes += anti_nodes_map.len();
     
     println!("There are a total of {} anti nodes", total_anti_nodes);
 }
