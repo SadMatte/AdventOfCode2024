@@ -1,10 +1,8 @@
-use std::{fs, vec};
+use std::fs;
 
 fn main() {
     let input: String = fs::read_to_string("input.txt")
         .expect("File not found");
-
-    let input: &str = "2333133121414131402";
 
     let mut file_blocks: Vec<i64> = Vec::new();
     let mut data_block_is_free_space: bool = false;
@@ -50,4 +48,12 @@ fn main() {
     }
 
     println!("{:?}", file_blocks_rearranged);
+
+    let mut total: usize = 0;
+
+    for (index, file_block) in file_blocks_rearranged.iter().enumerate() {
+        total += index * (*file_block as usize);
+    }
+
+    println!("{}", total);
 }
