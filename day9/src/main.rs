@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, vec};
 
 fn main() {
     let input: String = fs::read_to_string("input.txt")
@@ -6,7 +6,7 @@ fn main() {
 
     let input: &str = "2333133121414131402";
 
-    let mut file_blocks: String = String::new();
+    let mut file_blocks: Vec<i64> = Vec::new();
     let mut data_block_is_free_space: bool = false;
     let mut data_id: usize = 0;
 
@@ -14,13 +14,9 @@ fn main() {
     for character in input.chars() {
         for _character_count in 0..(character as u8 - '0' as u8) {
             if data_block_is_free_space {
-                file_blocks.push('.');
+                file_blocks.push(-1);
             } else {
-                file_blocks.push('i');
-                let data_id_str: String = data_id.to_string();
-                for data_id_char in data_id_str.chars() {
-                    file_blocks.push(data_id_char);
-                }
+                file_blocks.push(data_id as i64);
             }
         }
         if !data_block_is_free_space {
@@ -29,22 +25,29 @@ fn main() {
         data_block_is_free_space = !data_block_is_free_space;
     }
 
-    println!("{}", file_blocks);
+    println!("{:?}", file_blocks);
 
-    let mut file_blocks_clone: String = file_blocks.clone();
+    let mut file_blocks_clone: Vec<i64> = file_blocks.clone();
+    let mut file_blocks_rearranged: Vec<i64> = Vec::new();
 
     //re-order so that free space only exists at the end of the disk
-    for (character_index, character) in file_blocks.chars().enumerate() {
-        if character == '.' {
-            //find range of last file and swap its location with the first occurence of '.'
-            if let Some(last_i_index) = file_blocks_clone.rfind('i') {
-                let slice_from_i: &str = &file_blocks_clone[last_i_index..];
-                if let Some(dot_index) = slice_from_i.find('.') {
-                    let end_index: usize = last_i_index + dot_index;
-                    file_blocks_clone
+    for (file_block_index,file_block) in file_blocks.iter().enumerate() {
+        if file_block_index > file_blocks_clone.len()-1 {
+            break;
+        }
+        if *file_block == -1 {
+            if let Some(last_file_rev_index) = file_blocks_clone.iter().rev().position(|&file| file >= 0) {
+                let last_file_index: usize = file_blocks_clone.len() - 1 - last_file_rev_index;
+                file_blocks_rearranged.push(file_blocks_clone[last_file_index]);
+                file_blocks_clone.pop();
+                while file_blocks_clone[file_blocks_clone.len()-1] as i64 == -1 {
+                    file_blocks_clone.pop();
                 }
             }
-            file_blocks_clone.replace_range(character_index..character_index+1, replace_with);
+        } else {
+            file_blocks_rearranged.push(*file_block);
         }
     }
+
+    println!("{:?}", file_blocks_rearranged);
 }
