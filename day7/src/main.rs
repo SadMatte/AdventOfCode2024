@@ -62,7 +62,7 @@ fn main() {
                     expression_result += numbers[expression_index][operator_index];
                 }
             }
-            if results[expression_index] == expression_result && /* bandaid solution unfortunately */ !operational_possibilties[0] {
+            if results[expression_index] == expression_result && /* bandaid solution to the first operator not always being plus, or the starting value of expression_result not being the first number in the expression */ !operational_possibilties[0] {
                 println!("{} is a correct expression with:\n{:?}", expression, operational_possibilties);
                 total += expression_result;
                 break;

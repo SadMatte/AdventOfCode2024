@@ -21,21 +21,6 @@ fn main() {
     let input: String = fs::read_to_string("input.txt")
         .expect("File not found");
 
-    /*
-    ......#....#
-    ...#....0...
-    ....#0....#.
-    ..#....0....
-    ....0....#..
-    .#....A.....
-    ...#........
-    #......#....
-    ........A...
-    .........A..
-    ..........#.
-    ..........#.
-    */
-
     //matrix of all chars
     let matrix: Vec<&str> = input.split("\n").collect();
 
