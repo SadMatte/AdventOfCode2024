@@ -39,6 +39,7 @@ fn check_height_for_trail_in_matrix(height_number: &u8, y: &usize, x: &usize, ma
     }
 
     //remove duplicates before returning
+    //COMMENT THESE 2 LINES OUT FOR ANSWER TO PART 2 OF THIS DAY
     let mut unique_peaks_reached: HashSet<Vec<usize>> = HashSet::new();
     peaks_reached.retain(|peak| unique_peaks_reached.insert(peak.clone()));
 
