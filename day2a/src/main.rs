@@ -26,9 +26,9 @@ fn main() {
 
     let reports: Vec<Vec<u8>> = input
         .split("\n")
-        .map(|line| {
+        .map(|line: &str| {
             line.split_whitespace()
-            .map(|num| num.parse::<u8>().expect("Invalid number"))
+            .map(|num: &str| num.parse::<u8>().expect("Invalid number"))
             .collect()
         })
         .collect();
